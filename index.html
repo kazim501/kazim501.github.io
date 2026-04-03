@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kazım Kapısız — Endüstri Mühendisliği</title>
+
+<!-- Fonts: sistem fontunu fallback olarak kullan, Google Fonts başarısız olursa da çalışır -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ───────────────────────────── TOKENS ───────────────────────────── */
+:root {
+  --bg:      #130808;
+  --surface: #1e0e0e;
+  --card:    #251212;
+  --border:  #3d1515;
+  --red:     #c0392b;
+  --red2:    #e04a38;
+  --red3:    #ff7060;
+  --text:    #eedada;
+  --muted:   #8a6060;
+  --white:   #ffffff;
+
+  --font-head: 'Syne', 'Georgia', serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --r: 6px;
+  --max: 1080px;
+  --pad: clamp(48px, 7vw, 100px);
+}
+
+/* ───────────────────────────── RESET ───────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { display: block; max-width: 100%; }
+
+/* ───────────────────────────── GRID BG ───────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(192,57,43,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(192,57,43,.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ───────────────────────────── NAV ───────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px clamp(20px, 6vw, 80px);
+  background: rgba(19,8,8,.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: var(--font-head);
+  font-weight: 800; font-size: 1.15rem;
+  color: var(--white); letter-spacing: -.5px;
+}
+.logo em { color: var(--red3); font-style: normal; }
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+  font-size: .8rem; font-weight: 500; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--red3); }
+
+/* burger (mobile) */
+.burger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.burger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--text); border-radius: 2px; transition: all .3s;
+}
+.burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ───────────────────────────── LAYOUT ───────────────────────────── */
+.wrap {
+  position: relative; z-index: 1;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: var(--pad) clamp(20px, 6vw, 80px);
+}
+.wrap.full { max-width: 100%; }
+
+/* ───────────────────────────── SECTION LABELS ───────────────────────────── */
+.label {
+  display: block;
+  font-size: .72rem; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--red3);
+  margin-bottom: 10px;
+}
+.sec-title {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800; color: var(--white);
+  line-height: 1.08; margin-bottom: 48px;
+}
+.sec-title b { color: var(--red); font-weight: 800; }
+.rule {
+  width: 40px; height: 3px;
+  background: var(--red); border-radius: 2px;
+  margin-bottom: 48px;
+}
+
+/* ───────────────────────────── BUTTONS ───────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 13px 26px; border-radius: var(--r);
+  font-family: var(--font-body); font-size: .88rem; font-weight: 500;
+  cursor: pointer; border: none; transition: all .22s;
+}
+.btn-red { background: var(--red); color: #fff; }
+.btn-red:hover { background: var(--red2); transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent; color: var(--red3);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--red3); transform: translateY(-2px); }
+.btn-sm { padding: 9px 18px; font-size: .8rem; }
+
+/* ───────────────────────────── HERO ───────────────────────────── */
+#hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding-top: 100px;
+}
+.hero-kicker {
+  font-size: .75rem; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--red3);
+  margin-bottom: 20px;
+  animation: up .6s .1s both;
+}
+.hero-name {
+  font-family: var(--font-head);
+  font-size: clamp(3.5rem, 10vw, 7.5rem);
+  font-weight: 800; color: var(--white);
+  line-height: .98; letter-spacing: -2px;
+  animation: up .6s .2s both;
+}
+.hero-name span { color: var(--red); }
+.hero-desc {
+  margin-top: 28px; max-width: 520px;
+  font-size: 1.05rem; font-weight: 300; color: var(--muted);
+  animation: up .6s .35s both;
+}
+.hero-ctas {
+  margin-top: 44px; display: flex; gap: 14px; flex-wrap: wrap;
+  animation: up .6s .48s both;
+}
+.hero-scroll {
+  margin-top: 70px; display: flex; align-items: center; gap: 12px;
+  font-size: .72rem; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--muted); animation: up .6s .6s both;
+}
+.hero-scroll .line { flex: 0 0 36px; height: 1px; background: var(--muted); }
+
+@keyframes up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ───────────────────────────── ABOUT ───────────────────────────── */
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start;
+}
+.about-text p {
+  font-size: 1rem; font-weight: 300; color: var(--text);
+  margin-bottom: 16px;
+}
+.about-text p strong { color: var(--white); font-weight: 500; }
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.stat {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 20px;
+  transition: border-color .2s;
+}
+.stat:hover { border-color: var(--red); }
+.stat-n {
+  font-family: var(--font-head);
+  font-size: 2.4rem; font-weight: 800; color: var(--red3);
+  line-height: 1; margin-bottom: 4px;
+}
+.stat-l { font-size: .78rem; color: var(--muted); }
+
+/* ───────────────────────────── TIMELINE ───────────────────────────── */
+.tl-group-label {
+  font-size: .72rem; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 24px; margin-top: 44px; padding-left: 28px;
+}
+.tl-group-label:first-child { margin-top: 0; }
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 0; top: 8px; bottom: 0;
+  width: 1px; background: var(--border);
+}
+.tl-item {
+  position: relative; margin-bottom: 40px;
+}
+.tl-item:last-child { margin-bottom: 0; }
+.dot {
+  position: absolute; left: -33px; top: 9px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--red); border: 2px solid var(--bg);
+  box-shadow: 0 0 0 3px var(--border);
+}
+.tl-head {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 3px;
+}
+.tl-role {
+  font-family: var(--font-head);
+  font-size: 1rem; font-weight: 700; color: var(--white);
+}
+.tl-badge {
+  font-size: .72rem; font-weight: 600;
+  background: rgba(192,57,43,.15);
+  color: var(--red3);
+  border: 1px solid rgba(192,57,43,.25);
+  padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+}
+.tl-org {
+  font-size: .86rem; color: var(--red2); margin-bottom: 10px;
+}
+.tl-bul { padding: 0; }
+.tl-bul li {
+  position: relative; padding-left: 16px;
+  font-size: .9rem; font-weight: 300; color: var(--muted);
+  margin-bottom: 5px;
+}
+.tl-bul li::before {
+  content: '→'; position: absolute; left: 0;
+  color: var(--red); font-size: .78rem; top: 2px;
+}
+
+/* ───────────────────────────── SKILLS ───────────────────────────── */
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+.skill-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 26px 22px;
+  transition: border-color .22s, transform .22s;
+}
+.skill-card:hover { border-color: var(--red); transform: translateY(-3px); }
+.skill-icon { font-size: 1.4rem; margin-bottom: 12px; }
+.skill-cat {
+  font-family: var(--font-head);
+  font-size: .78rem; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--red3); margin-bottom: 12px;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.tag {
+  font-size: .75rem; font-weight: 400; color: var(--text);
+  background: rgba(192,57,43,.1); border: 1px solid rgba(192,57,43,.18);
+  padding: 3px 11px; border-radius: 20px;
+}
+
+/* ───────────────────────────── PROJECTS ───────────────────────────── */
+.proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.proj-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 32px;
+  position: relative; overflow: hidden;
+  transition: border-color .22s, transform .22s;
+}
+.proj-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--red3));
+  opacity: 0; transition: opacity .22s;
+}
+.proj-card:hover { border-color: var(--red); transform: translateY(-4px); }
+.proj-card:hover::before { opacity: 1; }
+.proj-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .7rem; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--red3);
+  background: rgba(192,57,43,.1); border: 1px solid rgba(192,57,43,.2);
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+}
+.wip-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #f0a000; animation: blink 1.4s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+.proj-title {
+  font-family: var(--font-head);
+  font-size: 1.35rem; font-weight: 800; color: var(--white); margin-bottom: 10px;
+}
+.proj-desc {
+  font-size: .92rem; font-weight: 300; color: var(--muted);
+  line-height: 1.7; margin-bottom: 18px;
+}
+
+/* ───────────────────────────── CONTACT ───────────────────────────── */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+.contact-intro {
+  font-size: 1rem; font-weight: 300; color: var(--muted);
+  margin-bottom: 32px;
+}
+.clinks { display: flex; flex-direction: column; gap: 12px; }
+.clink {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px 18px;
+  transition: border-color .2s, transform .2s; color: var(--text);
+}
+.clink:hover { border-color: var(--red3); transform: translateX(5px); }
+.clink-ico { width: 28px; text-align: center; font-size: .95rem; flex-shrink: 0; }
+.clink-val { font-size: .9rem; }
+.clink-lbl { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+.form-box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 32px;
+}
+.form-box h3 {
+  font-family: var(--font-head);
+  font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 22px;
+}
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: .72rem; font-weight: 500;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+.field input, .field textarea {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 11px 13px;
+  color: var(--text); font-family: var(--font-body); font-size: .9rem;
+  outline: none; resize: vertical; transition: border-color .2s;
+}
+.field input:focus, .field textarea:focus { border-color: var(--red); }
+.field textarea { min-height: 90px; }
+#form-status {
+  display: none; margin-top: 10px; font-size: .82rem; color: var(--red3);
+}
+
+/* ───────────────────────────── FOOTER ───────────────────────────── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 28px clamp(20px, 6vw, 80px);
+  text-align: center; font-size: .8rem; color: var(--muted);
+}
+footer b { color: var(--red); font-weight: 500; }
+
+/* ───────────────────────────── RESPONSIVE ───────────────────────────── */
+@media (max-width: 760px) {
+  .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; gap: 0;
+    background: rgba(19,8,8,.97); border-bottom: 1px solid var(--border); }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 16px clamp(20px, 6vw, 80px); border-top: 1px solid var(--border); }
+  .burger { display: flex; }
+  .about-grid, .contact-grid, .proj-grid { grid-template-columns: 1fr; gap: 32px; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .hero-name { letter-spacing: -1px; }
+}
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .skills-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════════════ -->
+<nav>
+  <a href="#hero" class="logo">Kazım <em>Kapısız</em></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hakkinda">Hakkında</a></li>
+    <li><a href="#deneyim">Deneyim</a></li>
+    <li><a href="#beceriler">Beceriler</a></li>
+    <li><a href="#projeler">Projeler</a></li>
+    <li><a href="#iletisim">İletişim</a></li>
+  </ul>
+  <button class="burger" id="burger" aria-label="Menü">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="wrap" style="padding-top:110px">
+    <p class="hero-kicker">Endüstri Mühendisliği &nbsp;·&nbsp; İSTÜN &nbsp;·&nbsp; 2. Sınıf</p>
+    <h1 class="hero-name">Kazım<br><span>Kapısız</span></h1>
+    <p class="hero-desc">
+      Üretim süreçlerine meraklı, liderlik deneyimi olan ve teknolojiyi
+      mühendisliğe entegre etmeye çalışan bir endüstri mühendisi adayı.
+    </p>
+    <div class="hero-ctas">
+      <a href="#iletisim" class="btn btn-red">İletişime Geç</a>
+      <a href="Kazim_Kapisiz_CV.docx" class="btn btn-ghost" download>CV İndir ↓</a>
+      <a href="https://www.linkedin.com/in/kazım-kapısız-507k507k/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn ↗</a>
+    </div>
+    <div class="hero-scroll">
+      <span class="line"></span>
+      <span>Aşağı kaydır</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HAKKINDA ══════════════════════════════════════════════════════ -->
+<section id="hakkinda">
+  <div class="wrap">
+    <span class="label">01 — Hakkımda</span>
+    <h2 class="sec-title">Kısaca <b>Kendim</b></h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          <strong>İstanbul Sağlık ve Teknoloji Üniversitesi'nde</strong> (İSTÜN)
+          Endüstri Mühendisliği okuyorum. Üretim süreçlerine olan merakım beni
+          Arslan Alüminyum'da fiili saha deneyimi yaşamaya yöneltti.
+        </p>
+        <p>
+          Girişimcilik Kulübü'nde organizasyon yönetimi, Yeni Dünya Vakfı'nda
+          birim başkanlığı ve T3 Vakfı'nda mentörlük görevleriyle
+          <strong>teorinin ötesinde</strong> sorumluluk almaya alıştım.
+        </p>
+        <p>
+          IEE kulübü bünyesinde bir ekiple <strong>lojistik optimizasyon
+          platformu</strong> geliştiriyorum. Üretim veya süreç mühendisliği
+          alanında zorunlu stajım için başvuru sürecindeyim.
+        </p>
+        <a href="#iletisim" class="btn btn-red" style="margin-top:12px">Birlikte çalışalım →</a>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-n">2.</div><div class="stat-l">Sınıf öğrencisi</div></div>
+        <div class="stat"><div class="stat-n">3+</div><div class="stat-l">Aktif gönüllülük rolü</div></div>
+        <div class="stat"><div class="stat-n">1</div><div class="stat-l">Saha üretim deneyimi</div></div>
+        <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Öğrenme iştahı</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DENEYİM ══════════════════════════════════════════════════════ -->
+<section id="deneyim">
+  <div class="wrap">
+    <span class="label">02 — Deneyim</span>
+    <h2 class="sec-title">İş &amp; <b>Gönüllülük</b></h2>
+
+    <p class="tl-group-label">İş Deneyimi</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="dot"></div>
+        <div class="tl-head">
+          <span class="tl-role">Üretim İşçisi</span>
+          <span class="tl-badge">Yaz 2024 · ~1 Ay</span>
+        </div>
+        <div class="tl-org">Arslan Alüminyum · Bilecik</div>
+        <ul class="tl-bul">
+          <li>Alüminyum profil üretim hattında çalışarak seri üretim süreçlerini ve darboğaz noktalarını yerinde analiz ettim.</li>
+          <li>Vardiya sistemi, iş güvenliği protokolleri ve malzeme akışını gözlemleyerek iyileştirme önerileri geliştirdim.</li>
+          <li>Üretim verimliliği ile ergonomi dengesini mühendislik perspektifiyle değerlendirdim.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="tl-group-label">Kulüp &amp; Etkinlik</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="dot"></div>
+        <div class="tl-head">
+          <span class="tl-role">Organizasyon Departmanı</span>
+          <span class="tl-badge">2025</span>
+        </div>
+        <div class="tl-org">Girişimcilik Kulübü · İSTÜN</div>
+        <ul class="tl-bul">
+          <li>Girişimcilik Zirvesi'nin organizasyon sürecinde aktif rol üstlendim.</li>
+          <li>Etkinlik planlaması, lojistik koordinasyon ve 200+ katılımcı yönetimini yürüttüm.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="tl-group-label">Gönüllülük</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="dot"></div>
+        <div class="tl-head">
+          <span class="tl-role">Gençlik Yurtları Birim Başkanı</span>
+          <span class="tl-badge">2025 – Devam ediyor</span>
+        </div>
+        <div class="tl-org">Yeni Dünya Vakfı · İstanbul</div>
+        <ul class="tl-bul">
+          <li>Gençlik öğrenci evleri ve yurtlar birimini yöneterek ekip koordinasyonunu sağlıyorum.</li>
+          <li>Birim içi iş akışları geliştirerek öğrenci yerleşim süreçlerini planlıyorum.</li>
+          <li>Vakıf yönetimine düzenli faaliyet raporları sunuyorum.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="dot"></div>
+        <div class="tl-head">
+          <span class="tl-role">Belletmen (Gönüllü)</span>
+          <span class="tl-badge">2025 – Devam ediyor</span>
+        </div>
+        <div class="tl-org">İmam Hatip Lisesi Fethiye Yurdu · İstanbul</div>
+        <ul class="tl-bul">
+          <li>Yurt öğrencilerine akademik rehberlik ve ders çalışma desteği sağlıyorum.</li>
+          <li>Grup etkinlikleriyle öğrencilerin sosyal gelişimine katkı sunuyorum.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="dot"></div>
+        <div class="tl-head">
+          <span class="tl-role">Teknoloji Atölyeleri Mentörü</span>
+          <span class="tl-badge">2025 – Devam ediyor</span>
+        </div>
+        <div class="tl-org">T3 Vakfı · İstanbul</div>
+        <ul class="tl-bul">
+          <li>Teknoloji atölyelerinde genç katılımcılara teknik rehberlik ve yönlendirme desteği sağlıyorum.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BECERİLER ════════════════════════════════════════════════════ -->
+<section id="beceriler">
+  <div class="wrap">
+    <span class="label">03 — Yetkinlikler</span>
+    <h2 class="sec-title">Teknik <b>Beceriler</b></h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">⚙️</div>
+        <div class="skill-cat">Programlama</div>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">C++</span>
+          <span class="tag">SQL</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Flutter</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📊</div>
+        <div class="skill-cat">Veri &amp; Analiz</div>
+        <div class="tags">
+          <span class="tag">Excel</span>
+          <span class="tag">Pivot Tablo</span>
+          <span class="tag">SQL</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📐</div>
+        <div class="skill-cat">Tasarım &amp; CAD</div>
+        <div class="tags">
+          <span class="tag">AutoCAD</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🌍</div>
+        <div class="skill-cat">Diller</div>
+        <div class="tags">
+          <span class="tag">Türkçe (Ana dil)</span>
+          <span class="tag">İngilizce (B1)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROJELER ══════════════════════════════════════════════════════ -->
+<section id="projeler">
+  <div class="wrap">
+    <span class="label">04 — Projeler</span>
+    <h2 class="sec-title">Neler <b>Geliştiriyorum</b></h2>
+    <div class="proj-grid">
+      <div class="proj-card">
+        <div class="proj-badge">
+          <span class="wip-dot"></span>
+          Geliştirme aşamasında
+        </div>
+        <div class="proj-title">loop.app</div>
+        <p class="proj-desc">
+          İSTÜN IEE kulübü bünyesinde bir ekiple geliştirdiğimiz lojistik
+          optimizasyon platformu. Rota planlama, operasyon takibi ve süreç
+          yönetimini tek arayüzde birleştirmeyi hedefliyor.
+        </p>
+        <div class="tags" style="margin-bottom:20px">
+          <span class="tag">TypeScript</span>
+          <span class="tag">Lojistik</span>
+          <span class="tag">Optimizasyon</span>
+          <span class="tag">Ekip Projesi</span>
+        </div>
+        <a href="https://github.com/kazim501/loop.app" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">
+          GitHub'da Görüntüle ↗
+        </a>
+      </div>
+      <div class="proj-card">
+        <div class="proj-badge">Saha Deneyimi</div>
+        <div class="proj-title">Üretim Hattı Analizi</div>
+        <p class="proj-desc">
+          Arslan Alüminyum'daki deneyimim sırasında üretim hattındaki
+          darboğaz noktalarını gözlemleyerek mühendislik notları oluşturdum.
+          Endüstri 4.0 kavramlarını gerçek ortamda inceleme fırsatı buldum.
+        </p>
+        <div class="tags">
+          <span class="tag">Üretim</span>
+          <span class="tag">Süreç Analizi</span>
+          <span class="tag">İş Güvenliği</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ İLETİŞİM ══════════════════════════════════════════════════════ -->
+<section id="iletisim">
+  <div class="wrap">
+    <span class="label">05 — İletişim</span>
+    <h2 class="sec-title">Benimle <b>İletişime</b> Geç</h2>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-intro">
+          Üretim stajı, bir proje iş birliği ya da sadece merhaba demek için
+          yazabilirsiniz. En kısa sürede geri dönmeye çalışırım.
+        </p>
+        <div class="clinks">
+          <a href="mailto:kazimkapisiz501@gmail.com" class="clink">
+            <span class="clink-ico">✉</span>
+            <div><div class="clink-val">kazimkapisiz501@gmail.com</div><div class="clink-lbl">E-posta</div></div>
+          </a>
+          <a href="tel:+905434431106" class="clink">
+            <span class="clink-ico">📱</span>
+            <div><div class="clink-val">0543 443 11 06</div><div class="clink-lbl">Telefon</div></div>
+          </a>
+          <a href="https://www.linkedin.com/in/kazım-kapısız-507k507k/" target="_blank" rel="noopener" class="clink">
+            <span class="clink-ico">in</span>
+            <div><div class="clink-val">linkedin.com/in/kazım-kapısız</div><div class="clink-lbl">LinkedIn</div></div>
+          </a>
+          <a href="https://github.com/kazim501" target="_blank" rel="noopener" class="clink">
+            <span class="clink-ico">⌥</span>
+            <div><div class="clink-val">github.com/kazim501</div><div class="clink-lbl">GitHub</div></div>
+          </a>
+        </div>
+      </div>
+      <div class="form-box">
+        <h3>Mesaj Gönder</h3>
+        <div class="field">
+          <label for="f-name">Adınız</label>
+          <input id="f-name" type="text" placeholder="Adı Soyadı" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="f-email">E-posta</label>
+          <input id="f-email" type="email" placeholder="ornek@mail.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="f-msg">Mesajınız</label>
+          <textarea id="f-msg" placeholder="Merhaba Kazım, ..."></textarea>
+        </div>
+        <button class="btn btn-red" id="sendBtn" style="width:100%">Gönder →</button>
+        <p id="form-status"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
+<footer>
+  <p>© 2025 <b>Kazım Kapısız</b> · Tüm hakları saklıdır.</p>
+</footer>
+
+<!-- ══ JS ════════════════════════════════════════════════════════════ -->
+<script>
+/* —— Mobile burger —— */
+const burger = document.getElementById('burger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
+});
+
+/* —— Active nav highlight on scroll —— */
+const sections = document.querySelectorAll('section[id]');
+const links    = document.querySelectorAll('.nav-links a');
+function setActive() {
+  let cur = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+  });
+  links.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + cur
+      ? 'var(--red3)' : '';
+  });
+}
+window.addEventListener('scroll', setActive, { passive: true });
+
+/* —— Scroll reveal (robust: fallback after 300ms if observer slow) —— */
+const reveals = document.querySelectorAll('.skill-card, .proj-card, .tl-item, .stat');
+reveals.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(18px)';
+  el.style.transition = 'opacity .45s ease, transform .45s ease';
+});
+
+function showEl(el) {
+  el.style.opacity = '1';
+  el.style.transform = 'translateY(0)';
+}
+
+if ('IntersectionObserver' in window) {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { showEl(e.target); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => obs.observe(el));
+} else {
+  /* fallback for old browsers */
+  reveals.forEach(el => showEl(el));
+}
+
+/* Safety fallback: show everything after 1.2s regardless */
+setTimeout(() => reveals.forEach(el => showEl(el)), 1200);
+
+/* —— Contact form (opens mail client) —— */
+document.getElementById('sendBtn').addEventListener('click', () => {
+  const name  = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const msg   = document.getElementById('f-msg').value.trim();
+  const status = document.getElementById('form-status');
+
+  if (!name || !email || !msg) {
+    status.style.display = 'block';
+    status.style.color = 'var(--red3)';
+    status.textContent = '⚠ Lütfen tüm alanları doldurun.';
+    return;
+  }
+  const sub  = encodeURIComponent('Portfolio İletişim — ' + name);
+  const body = encodeURIComponent('Gönderen: ' + name + '\nE-posta: ' + email + '\n\n' + msg);
+  window.location.href = 'mailto:kazimkapisiz501@gmail.com?subject=' + sub + '&body=' + body;
+  status.style.display = 'block';
+  status.style.color = '#60c080';
+  status.textContent = '✓ Mail uygulamanız açılıyor...';
+});
+</script>
+</body>
+</html>
